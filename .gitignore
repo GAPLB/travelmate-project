@@ -1,0 +1,16 @@
+# Carpeta de compilación de Maven — se regenera sola, no debe subirse
+target/
+
+# Archivos de configuración de IntelliJ (algunos son personales de cada quien)
+.idea/
+*.iml
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Si algún día guardas contraseñas reales en application.properties, considera excluirlo también
+# application.properties
+#Ojo: por ahora application.properties tiene una
+#contraseña simple de práctica, así que está bien subirlo
+#Pero en un proyecto real, las contraseñas nunca se suben a GitHub.
