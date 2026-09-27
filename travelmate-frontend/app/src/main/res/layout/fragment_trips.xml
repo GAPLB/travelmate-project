@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NotesFragment">
+    tools:context=".TripsFragment">
 
     <!-- Título de la sección -->
     <TextView
-        android:id="@+id/tvTitleNotes"
+        android:id="@+id/tvTripsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mi Wishlist de Viajes y Notas"
+        android:text="Mis Viajes Planeados ✈️"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginStart="16dp"
@@ -19,59 +19,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Buscador en tiempo real -->
-    <EditText
-        android:id="@+id/etSearchNote"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        android:hint="Buscar nota o destino..."
-        android:inputType="text"
-        android:drawableStart="@android:drawable/ic_menu_search"
-        android:drawablePadding="8dp"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitleNotes" />
-
-    <!-- Instrucciones de uso -->
+    <!-- Instrucciones -->
     <TextView
-        android:id="@+id/tvListInstructions"
+        android:id="@+id/tvTripsInstructions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
-        android:text="Toca una nota para editar o mantén presionado para eliminar."
+        android:text="Toca un viaje para ver sus destinos y gastos asociados."
         android:textSize="12sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etSearchNote" />
+        app:layout_constraintTop_toBottomOf="@id/tvTripsTitle" />
 
-    <!-- Lista donde se pintarán las notas offline de SQLite -->
+    <!-- Lista de Viajes (Aquí Yudy conectará el RecyclerView o ListView con la API) -->
     <ListView
-        android:id="@+id/listViewNotes"
+        android:id="@+id/listViewTrips"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvListInstructions" />
+        app:layout_constraintTop_toBottomOf="@id/tvTripsInstructions" />
 
-    <!-- Botón Flotante (FAB) para abrir el formulario de nueva nota -->
+    <!-- Botón Flotante para crear un Nuevo Viaje -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddNote"
+        android:id="@+id/fabAddTrip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        android:contentDescription="Agregar nota"
+        android:contentDescription="Agregar viaje"
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

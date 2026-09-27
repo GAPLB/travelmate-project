@@ -56,6 +56,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM " + TABLE_NOTES + " WHERE " + COLUMN_STATUS + " = 1", null);
     }
 
+    // NUEVO: Buscar notas activas por coincidencia en el título o descripción (Para el Buscador)
+    public Cursor searchActiveNotes(String query) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_NOTES +
+                " WHERE " + COLUMN_STATUS + " = 1 AND (" +
+                COLUMN_TITLE + " LIKE ? OR " +
+                COLUMN_DESCRIPTION + " LIKE ?)";
+        String arg = "%" + query + "%";
+        return db.rawQuery(sql, new String[]{arg, arg});
+    }
+
     // Actualizar una nota existente (Update del CRUD)
     public boolean updateNote(int noteId, String title, String description) {
         SQLiteDatabase db = this.getWritableDatabase();

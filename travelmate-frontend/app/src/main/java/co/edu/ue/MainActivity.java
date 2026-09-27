@@ -30,19 +30,21 @@ public class MainActivity extends AppCompatActivity {
             Fragment selectedFragment = null;
             int itemId = item.getItemId();
 
-            // Evaluamos cuál opción del menú fue presionada y asignamos su respectivo Fragment (pantalla)
             if (itemId == R.id.nav_home) {
-                selectedFragment = new HomeFragment(); // Pantalla de Inicio
-            } else if (itemId == R.id.nav_favorite) {
-                selectedFragment = new NotesFragment(); // Pantalla de Notas Offline
-            } else if (itemId == R.id.nav_info) {
-                selectedFragment = new InfoFragment(); // Pantalla de Información
+                selectedFragment = new HomeFragment();
+            } else if (itemId == R.id.nav_trips) {
+                // Fragment encargado de listar los viajes de la API
+                selectedFragment = new TripsFragment(); // Temporal mientras Yudy o tú crean el de viajes
+            } else if (itemId == R.id.nav_notes) {
+                selectedFragment = new NotesFragment(); // Módulo SQLite offline con Lista y Buscador
+            } else if (itemId == R.id.nav_account) {
+                // Pantalla de Login / Registro de Usuario (Cuenta)
+                selectedFragment = new AccountFragment(); // Cargamos nuestra pantalla de cuenta y login
             }
 
-            // Si se seleccionó un fragmento válido, lo mostramos en pantalla
             if (selectedFragment != null) {
                 loadFragment(selectedFragment);
-                return true; // Indicamos que el clic fue manejado con éxito
+                return true;
             }
             return false;
         });
