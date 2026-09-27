@@ -3,4 +3,11 @@
     <string name="tvWelcome">¡Bienvenido a TravelMate! ✈️ </string>
     <string name="tvSubtitle">Tus próximos viajes y destinos organizados.</string>
     <string name="tvTitleNotes">Mi Wishlist de Viajes</string>
+    <string-array name="expense_categories">
+        <item>Seleccione una categoría...</item>
+        <item>TRANSPORTE</item>
+        <item>COMIDA</item>
+        <item>HOSPEDAJE</item>
+        <item>ACTIVIDAD</item>
+    </string-array>
 </resources>

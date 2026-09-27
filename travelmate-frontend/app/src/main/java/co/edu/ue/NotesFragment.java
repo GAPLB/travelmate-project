@@ -3,29 +3,31 @@ package co.edu.ue;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
 public class NotesFragment extends Fragment {
 
-    private EditText etNoteTitle, etNoteDescription;
-    private Button btnSaveNote;
+    private EditText etSearchNote;
     private ListView listViewNotes;
+    private FloatingActionButton fabAddNote;
     private DatabaseHelper databaseHelper;
 
     private ArrayList<String> notesList;
     private ArrayList<Integer> notesIds;
     private ArrayAdapter<String> adapter;
-
-    private int selectedNoteId = -1; // Variable para saber si estamos editando una nota existente
 
     public NotesFragment() {
         // Constructor vacío requerido
@@ -38,76 +40,61 @@ public class NotesFragment extends Fragment {
 
         databaseHelper = new DatabaseHelper(getContext());
 
-        etNoteTitle = view.findViewById(R.id.etNoteTitle);
-        etNoteDescription = view.findViewById(R.id.etNoteDescription);
-        btnSaveNote = view.findViewById(R.id.btnSaveNote);
+        etSearchNote = view.findViewById(R.id.etSearchNote);
         listViewNotes = view.findViewById(R.id.listViewNotes);
+        fabAddNote = view.findViewById(R.id.fabAddNote);
 
-        loadNotesIntoList();
+        // Cargamos todas las notas activas al iniciar el fragmento
+        loadNotesIntoList("");
 
-        // Botón para Guardar o Actualizar
-        btnSaveNote.setOnClickListener(v -> {
-            String title = etNoteTitle.getText().toString().trim();
-            String description = etNoteDescription.getText().toString().trim();
+        // Buscador en tiempo real
+        etSearchNote.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            if (!title.isEmpty() && !description.isEmpty()) {
-                if (selectedNoteId == -1) {
-                    // Si no hay ID seleccionado, es una inserción nueva (CREATE)
-                    boolean isInserted = databaseHelper.insertNote(title, description);
-                    if (isInserted) {
-                        Toast.makeText(getContext(), "¡Nota guardada offline con éxito!", Toast.LENGTH_SHORT).show();
-                        clearForm();
-                        loadNotesIntoList();
-                    } else {
-                        Toast.makeText(getContext(), "Error al guardar la nota", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // Si hay un ID seleccionado, actualizamos la nota (UPDATE)
-                    boolean isUpdated = databaseHelper.updateNote(selectedNoteId, title, description);
-                    if (isUpdated) {
-                        Toast.makeText(getContext(), "¡Nota actualizada con éxito!", Toast.LENGTH_SHORT).show();
-                        clearForm();
-                        loadNotesIntoList();
-                    } else {
-                        Toast.makeText(getContext(), "Error al actualizar la nota", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } else {
-                Toast.makeText(getContext(), "Por favor completa todos los campos", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                loadNotesIntoList(s.toString()); // Filtra según lo que el usuario escriba
             }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
 
-        // Tocar una nota brevemente para CARGARLA en el formulario y poder EDITARLA
+        // Botón flotante (+) para abrir el formulario de creación de una nueva nota
+        fabAddNote.setOnClickListener(v -> {
+            // Aquí navegamos al Fragment del formulario de notas (AddEditNoteFragment)
+            AddEditNoteFragment formFragment = new AddEditNoteFragment();
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragmentContainer, formFragment);
+            transaction.addToBackStack(null); // Permite volver atrás con el botón del celular
+            transaction.commit();
+        });
+
+        // Tocar una nota brevemente para EDITARLA enviando su ID al formulario
         listViewNotes.setOnItemClickListener((parent, view1, position, id) -> {
-            selectedNoteId = notesIds.get(position);
+            int selectedId = notesIds.get(position);
 
-            // Extraemos los textos actuales para ponerlos en los EditText
-            Cursor cursor = databaseHelper.getActiveNotes();
-            if (cursor != null) {
-                int index = 0;
-                while (cursor.moveToNext()) {
-                    if (index == position) {
-                        etNoteTitle.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE)));
-                        etNoteDescription.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION)));
-                        btnSaveNote.setText("Actualizar Nota");
-                        break;
-                    }
-                    index++;
-                }
-                cursor.close();
-            }
-            Toast.makeText(getContext(), "Modo edición activado", Toast.LENGTH_SHORT).show();
+            Bundle bundle = new Bundle();
+            bundle.putInt("NOTE_ID", selectedId); // Pasamos el ID para saber que vamos a actualizar
+
+            AddEditNoteFragment formFragment = new AddEditNoteFragment();
+            formFragment.setArguments(bundle);
+
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragmentContainer, formFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         });
 
-        // Mantener presionado una nota (Long Click) para hacer el Borrado Lógico (1 a 0)
+        // Mantener presionado una nota (Long Click) para hacer el Borrado con status (1 a 0)
         listViewNotes.setOnItemLongClickListener((parent, view12, position, id) -> {
             int noteIdToDelete = notesIds.get(position);
             boolean deleted = databaseHelper.DeleteNote(noteIdToDelete);
 
             if (deleted) {
-                Toast.makeText(getContext(), "Nota eliminada (Borrado lógico)", Toast.LENGTH_SHORT).show();
-                clearForm();
-                loadNotesIntoList();
+                Toast.makeText(getContext(), "Nota eliminada correctamente", Toast.LENGTH_SHORT).show();
+                loadNotesIntoList("");
             } else {
                 Toast.makeText(getContext(), "No se pudo eliminar la nota", Toast.LENGTH_SHORT).show();
             }
@@ -117,12 +104,17 @@ public class NotesFragment extends Fragment {
         return view;
     }
 
-    // Método para consultar SQLite y pintar las notas numeradas (1., 2., 3...)
-    private void loadNotesIntoList() {
+    // Método para consultar SQLite con o sin filtro de búsqueda y pintar las notas
+    private void loadNotesIntoList(String query) {
         notesList = new ArrayList<>();
         notesIds = new ArrayList<>();
 
-        Cursor cursor = databaseHelper.getActiveNotes();
+        Cursor cursor;
+        if (query.isEmpty()) {
+            cursor = databaseHelper.getActiveNotes();
+        } else {
+            cursor = databaseHelper.searchActiveNotes(query);
+        }
 
         if (cursor != null && cursor.moveToFirst()) {
             int contador = 1;
@@ -132,7 +124,6 @@ public class NotesFragment extends Fragment {
                 String description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION));
 
                 notesIds.add(id);
-                // Aquí aplicamos el formato numerado 1., 2., 3... para que parezca checklist
                 notesList.add(contador + ". " + title + "\n   " + description);
                 contador++;
             } while (cursor.moveToNext());
@@ -141,13 +132,5 @@ public class NotesFragment extends Fragment {
 
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, notesList);
         listViewNotes.setAdapter(adapter);
-    }
-
-    // Limpiar formulario y restablecer el botón
-    private void clearForm() {
-        etNoteTitle.setText("");
-        etNoteDescription.setText("");
-        btnSaveNote.setText("Guardar Nota Offline");
-        selectedNoteId = -1;
     }
 }

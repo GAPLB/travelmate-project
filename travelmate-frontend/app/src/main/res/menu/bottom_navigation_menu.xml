@@ -4,12 +4,19 @@
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
         android:title="Inicio" />
+
     <item
-        android:id="@+id/nav_favorite"
-        android:icon="@drawable/ic_favorite"
-        android:title="Wishlist" />
+        android:id="@+id/nav_trips"
+        android:icon="@drawable/ic_travel"
+        android:title="Viajes" />
+
     <item
-        android:id="@+id/nav_info"
-        android:icon="@drawable/ic_info"
-        android:title="Información" />
+        android:id="@+id/nav_notes"
+        android:icon="@drawable/ic_notes"
+        android:title="Notas Offline" />
+
+    <item
+        android:id="@+id/nav_account"
+        android:icon="@drawable/ic_cuenta"
+        android:title="Cuenta" />
 </menu>
