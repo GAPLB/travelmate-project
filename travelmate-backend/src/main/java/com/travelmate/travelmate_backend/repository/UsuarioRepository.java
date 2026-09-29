@@ -12,5 +12,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     // "findByEmail" → SELECT * FROM usuarios WHERE email = ?
     // No necesitas escribir el SQL tú mismo, ni implementar el método.
 
-    Optional<Object> findByEmail(String email);
+
+    Optional<Usuario> findByEmail(String email);   // antes: Optional<Object>
 }
