@@ -267,7 +267,8 @@ La API REST fue validada mediante **Postman**, incluyendo:
 Las capturas y evidencias de las pruebas realizadas se encuentran en:
 
 ```text
-docs/pruebasProjectKellyn.docx
+docs/pruebasProjectKellyn.pdf
+
 ```
 
 El documento contiene las evidencias de las diferentes operaciones realizadas contra la API y las verificaciones correspondientes en la base de datos.
