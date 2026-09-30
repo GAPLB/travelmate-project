@@ -1,5 +1,6 @@
 package com.travelmate.travelmate_backend.configuracion;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity   // activa la configuración personalizada de seguridad de Spring
+
 public class SecurityConfig {
 
     @Bean
@@ -36,6 +38,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
+
 
         return http.build();
     }
