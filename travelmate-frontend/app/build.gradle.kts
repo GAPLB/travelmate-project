@@ -48,7 +48,7 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.0")
     // Para ubicación
     implementation("com.google.android.gms:play-services-location:21.0.1")
-    
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
