@@ -1,8 +1,11 @@
 package com.travelmate.travelmate_backend.dto;
 
 public class LoginDTO {
+
     private String email;
+
     private String password;
+
 
     public LoginDTO(){}
 

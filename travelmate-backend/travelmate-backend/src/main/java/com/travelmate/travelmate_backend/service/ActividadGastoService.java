@@ -13,19 +13,24 @@ import java.util.Optional;
 public class ActividadGastoService {
 
     @Autowired
+
     private ActividadGastoRepository actividadGastoRepository;
+
 
     public List<ActividadGasto> listarPorViaje(Long viajeId) {
         return actividadGastoRepository.findByViajeId(viajeId);
     }
 
+
     public Optional<ActividadGasto> buscarPorId(Long id) {
         return actividadGastoRepository.findById(id);
     }
 
+
     public ActividadGasto crear(ActividadGasto actividadGasto) {
         return actividadGastoRepository.save(actividadGasto);
     }
+
 
     public ActividadGasto actualizar(Long id, ActividadGasto datosNuevos) {
         ActividadGasto existente = actividadGastoRepository.findById(id)

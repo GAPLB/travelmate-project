@@ -3,9 +3,12 @@ package com.travelmate.travelmate_backend.dto;
 public class UsuarioDTO {
 
     private String nombre;
+
     private String email;
+
     private String password;   // aquí SÍ viaja en texto plano, porque el usuario la escribe así en el formulario
     // (se encripta DESPUÉS, dentro del servidor, nunca antes)
+
 
     // Constructor vacío, necesario para que Spring pueda "armar" el objeto desde el JSON recibido
     public UsuarioDTO() {

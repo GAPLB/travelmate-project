@@ -14,6 +14,7 @@ import java.util.List;
 public class ActividadGastoController {
 
     @Autowired
+
     private ActividadGastoService actividadGastoService;
 
     @GetMapping("/viaje/{viajeId}")

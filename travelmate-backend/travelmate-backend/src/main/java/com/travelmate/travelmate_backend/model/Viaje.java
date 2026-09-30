@@ -3,11 +3,14 @@ package com.travelmate.travelmate_backend.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-@Entity                          // le dice a Spring: "esta clase representa una tabla"
+@Entity// le dice a Spring: "esta clase representa una tabla"
+
 @Table(name = "viajes")          // la conecta con tu tabla viajes en PostgreSQL
+
 public class Viaje {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

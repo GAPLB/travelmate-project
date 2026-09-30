@@ -3,10 +3,14 @@ package com.travelmate.travelmate_backend.model;
 import jakarta.persistence.*;
 
 @Entity // le dice a Spring: "esta clase es una tabla"
+
     @Table(name = "usuarios")   // la conecta con tu tabla usuarios en PostgreSQL
 
+
     public class Usuario {
+
         @Id  // clave primaria
+
         @GeneratedValue(strategy = GenerationType.IDENTITY)  // el valor lo genera la BD (como tu BIGSERIAL)
         private long id;
 

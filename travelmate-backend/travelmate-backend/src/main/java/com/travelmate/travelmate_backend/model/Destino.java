@@ -6,10 +6,13 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+
 @Table(name = "destinos")
+
 public class Destino {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -14,6 +14,7 @@ import java.util.List;
 public class ViajeController {
 
         @Autowired
+
         private ViajeService viajeService;
 
         // ---------- GET: listar todos los viajes de un usuario ----------

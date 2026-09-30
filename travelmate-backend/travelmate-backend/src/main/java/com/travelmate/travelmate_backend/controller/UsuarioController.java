@@ -19,6 +19,7 @@ public class UsuarioController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     // ---------- REGISTRO ----------
     @PostMapping("/registro")
     public ResponseEntity<?> registrar(@RequestBody UsuarioDTO dto) {
@@ -42,6 +43,7 @@ public class UsuarioController {
         return ResponseEntity.status(201).body("Usuario registrado con éxito");
     }
     // ---------- FIN REGISTRO ---------- (aquí SÍ se cierra el método, con su propia llave)
+
 
     // ---------- LOGIN ----------
     @PostMapping("/login")

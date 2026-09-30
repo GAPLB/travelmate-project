@@ -6,11 +6,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+
 @Table(name = "actividades_gastos")
+
 public class ActividadGasto {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     @Column(nullable = false, length = 200)

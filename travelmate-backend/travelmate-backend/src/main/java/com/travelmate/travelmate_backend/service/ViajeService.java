@@ -14,30 +14,36 @@ import java.util.List;
 import java.util.Optional;
 
 @Service   // le dice a Spring: "esta clase contiene lógica de negocio, gestiónala como componente"
+
 public class ViajeService {
 
     @Autowired
     private ViajeRepository viajeRepository;
+
 
     // Listar todos los viajes de un usuario específico
     public List<Viaje> listarPorUsuario(Long usuarioId) {
         return viajeRepository.findByUsuarioId(usuarioId);
     }
 
+
     // Buscar un viaje por su id (puede no existir, por eso Optional)
     public Optional<Viaje> buscarPorId(Long id) {
         return viajeRepository.findById(id);
     }
+
 
     // Crear un nuevo viaje
     public Viaje crear(Viaje viaje) {
         return viajeRepository.save(viaje);
     }
 
+
     // Actualizar un viaje existente
     public Viaje actualizar(Long id, Viaje datosNuevos) {
         Viaje viajeExistente = viajeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
+
 
         // Copiamos los campos nuevos sobre el viaje que ya existe en la BD
         viajeExistente.setTitulo(datosNuevos.getTitulo());
@@ -45,8 +51,10 @@ public class ViajeService {
         viajeExistente.setFechaInicio(datosNuevos.getFechaInicio());
         viajeExistente.setFechaFin(datosNuevos.getFechaFin());
 
+
         return viajeRepository.save(viajeExistente);
     }
+
 
     // Eliminar un viaje por id
     public void eliminar(Long id) {
