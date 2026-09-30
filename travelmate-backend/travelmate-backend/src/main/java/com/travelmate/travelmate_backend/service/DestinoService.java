@@ -9,25 +9,32 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+
 public class DestinoService {
 
     @Autowired
     private DestinoRepository destinoRepository;
 
+
     public List<Destino> listarPorViaje(Long viajeId) {
         return destinoRepository.findByViajeId(viajeId);
     }
+
 
     public Optional<Destino> buscarPorId(Long id) {
         return destinoRepository.findById(id);
     }
 
+
     public Destino crear(Destino destino) {
         return destinoRepository.save(destino);
     }
 
+
     public Destino actualizar(Long id, Destino datosNuevos) {
+
         Destino destinoExistente = destinoRepository.findById(id)
+
                 .orElseThrow(() -> new RuntimeException("Destino no encontrado"));
 
         destinoExistente.setNombre(datosNuevos.getNombre());
