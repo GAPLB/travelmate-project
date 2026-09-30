@@ -1,5 +1,6 @@
 package co.edu.ue.utils;
 
+<<<<<<< Updated upstream
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -51,3 +52,61 @@ public class NetworkUtils {
         Toast.makeText(context, "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
     }
 }
+=======
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+/**
+ * Utilidad para detectar el estado de conexión a Internet.
+ * Usa ConnectivityManager para verificar si el dispositivo tiene
+ * una red activa y si esa red tiene conexión a Internet.
+ */
+public class NetworkUtils {
+
+    /**
+     * Verifica si el dispositivo tiene conexión a Internet.
+     * 
+     * @param context Contexto de la aplicación
+     * @return true si hay conexión, false si no hay conexión
+     */
+    public static boolean hayConexionInternet(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.isConnected();
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si el dispositivo está conectado a WiFi.
+     */
+    public static boolean esWifi(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            return wifiInfo != null && wifiInfo.isConnected();
+        }
+        return false;
+    }
+
+    /**
+     * Verifica si el dispositivo está conectado a datos móviles.
+     */
+    public static boolean esDatosMoviles(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            return mobileInfo != null && mobileInfo.isConnected();
+        }
+        return false;
+    }
+}
+>>>>>>> Stashed changes

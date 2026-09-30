@@ -1,7 +1,6 @@
 package co.edu.ue;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+
 import co.edu.ue.dto.LoginDTO;
 import co.edu.ue.dto.LoginResponse;
 import co.edu.ue.dto.UsuarioDTO;
@@ -24,16 +26,22 @@ public class AccountFragment extends Fragment {
     private EditText etName, etEmail, etPassword;
     private Button btnSubmit;
     private TextView tvToggleMode, tvAppTitle;
-    private boolean isLoginMode = true;
+
+    private boolean isLoginMode = true; // Por defecto arranca en modo Iniciar Sesión
+
+    // Manejador de sesión para guardar los datos del usuario logueado
     private SessionManager sessionManager;
 
-    public AccountFragment() {}
+    public AccountFragment() {
+        // Constructor vacío requerido
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
+        // Inicializar el manejador de sesión
         sessionManager = new SessionManager(requireContext());
 
         etName = view.findViewById(R.id.etName);
@@ -43,26 +51,23 @@ public class AccountFragment extends Fragment {
         tvToggleMode = view.findViewById(R.id.tvToggleMode);
         tvAppTitle = view.findViewById(R.id.tvAppTitle);
 
-        // Si ya está logueado, mostrar mensaje de bienvenida
-        if (sessionManager.isLoggedIn()) {
-            tvAppTitle.setText("Hola, " + sessionManager.getUserName());
-        }
-
+        // Controlar el botón de alternar entre Login y Registro
         tvToggleMode.setOnClickListener(v -> {
             isLoginMode = !isLoginMode;
             if (isLoginMode) {
                 etName.setVisibility(View.GONE);
                 btnSubmit.setText("Iniciar Sesión");
                 tvToggleMode.setText("¿No tienes cuenta? Regístrate aquí");
-                tvAppTitle.setText("TravelMate - Login");
+                tvAppTitle.setText("TravelMate 🌍 - Login");
             } else {
                 etName.setVisibility(View.VISIBLE);
                 btnSubmit.setText("Registrarse");
                 tvToggleMode.setText("¿Ya tienes cuenta? Inicia sesión");
-                tvAppTitle.setText("TravelMate - Registro");
+                tvAppTitle.setText("TravelMate 🌍 - Registro");
             }
         });
 
+        // Acción al presionar el botón principal
         btnSubmit.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -73,61 +78,82 @@ public class AccountFragment extends Fragment {
                 return;
             }
 
-            // Verificar conexión a Internet
-            if (!NetworkUtils.isNetworkAvailable(requireContext())) {
-                NetworkUtils.showNoConnectionToast(requireContext());
+            // Verificar conexión a Internet antes de hacer la petición
+            if (!NetworkUtils.hayConexionInternet(requireContext())) {
+                Toast.makeText(getContext(), "No hay conexión a Internet. Verifica tu red.", Toast.LENGTH_LONG).show();
                 return;
             }
 
             if (isLoginMode) {
-                // LÓGICA DE LOGIN CON API
-                LoginDTO loginDTO = new LoginDTO(email, password);
-                RetrofitClient.getApiService().login(loginDTO).enqueue(new Callback<LoginResponse>() {
-                    @Override
-                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            LoginResponse user = response.body();
-                            sessionManager.saveSession(user);
-                            Toast.makeText(getContext(), "¡Bienvenido, " + user.getNombre() + "!", Toast.LENGTH_SHORT).show();
-                            tvAppTitle.setText("Hola, " + user.getNombre());
-                        } else {
-                            Toast.makeText(getContext(), "Credenciales inválidas", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<LoginResponse> call, Throwable t) {
-                        Toast.makeText(getContext(), "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                // LÓGICA DE LOGIN: conectar con el endpoint de Spring Boot
+                iniciarSesion(email, password);
             } else {
-                // LÓGICA DE REGISTRO CON API
-                UsuarioDTO usuarioDTO = new UsuarioDTO(name, email, password);
-                RetrofitClient.getApiService().registrarUsuario(usuarioDTO).enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "¡Registro exitoso! Ahora inicia sesión.", Toast.LENGTH_SHORT).show();
-                            // Cambiar a modo login
-                            isLoginMode = true;
-                            etName.setVisibility(View.GONE);
-                            btnSubmit.setText("Iniciar Sesión");
-                            tvToggleMode.setText("¿No tienes cuenta? Regístrate aquí");
-                        } else if (response.code() == 409) {
-                            Toast.makeText(getContext(), "El correo ya está registrado", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "Error en el registro", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Toast.makeText(getContext(), "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                // LÓGICA DE REGISTRO: conectar con POST /api/usuarios/registro
+                registrarUsuario(name, email, password);
             }
         });
 
         return view;
+    }
+
+    /**
+     * Realiza la petición de login al servidor Spring Boot.
+     * URL: POST /api/usuarios/login
+     */
+    private void iniciarSesion(String email, String password) {
+        LoginDTO loginDTO = new LoginDTO(email, password);
+
+        RetrofitClient.getApiService().login(loginDTO).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse loginResponse = response.body();
+
+                    // Guardar la sesión del usuario
+                    sessionManager.guardarSesion(loginResponse.getId(), loginResponse.getNombre(), loginResponse.getEmail());
+
+                    Toast.makeText(getContext(), "¡Bienvenido, " + loginResponse.getNombre() + "!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Credenciales inválidas. Verifica tu email y contraseña.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * Realiza la petición de registro al servidor Spring Boot.
+     * URL: POST /api/usuarios/registro
+     */
+    private void registrarUsuario(String nombre, String email, String password) {
+        UsuarioDTO usuarioDTO = new UsuarioDTO(nombre, email, password);
+
+        RetrofitClient.getApiService().registrarUsuario(usuarioDTO).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "¡Usuario registrado con éxito! Ahora inicia sesión.", Toast.LENGTH_LONG).show();
+                    // Cambiar automáticamente al modo login
+                    isLoginMode = true;
+                    etName.setVisibility(View.GONE);
+                    btnSubmit.setText("Iniciar Sesión");
+                    tvToggleMode.setText("¿No tienes cuenta? Regístrate aquí");
+                    tvAppTitle.setText("TravelMate 🌍 - Login");
+                } else if (response.code() == 409) {
+                    Toast.makeText(getContext(), "El correo ya está registrado. Intenta con otro.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Error al registrar: " + response.message(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getContext(), "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
