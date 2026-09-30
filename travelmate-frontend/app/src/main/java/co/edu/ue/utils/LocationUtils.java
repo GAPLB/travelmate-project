@@ -33,7 +33,17 @@ public class LocationUtils {
      * Obtiene la última ubicación conocida del dispositivo
      */
     public void getLastLocation(OnLocationResultListener listener) {
-        if (!hasLocationPermission(context)) {
+
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+                &&
+                ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED) {
+
             listener.onError("Permiso de ubicación no concedido");
             return;
         }
@@ -41,27 +51,47 @@ public class LocationUtils {
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(location -> {
                     if (location != null) {
-                        listener.onResult(location.getLatitude(), location.getLongitude());
+                        listener.onResult(
+                                location.getLatitude(),
+                                location.getLongitude()
+                        );
                     } else {
                         listener.onError("No se pudo obtener la ubicación");
                     }
                 })
-                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                .addOnFailureListener(e ->
+                        listener.onError(e.getMessage())
+                );
     }
 
     /**
      * Solicita actualizaciones de ubicación en tiempo real
      */
     public void requestLocationUpdates(LocationCallback callback) {
-        if (!hasLocationPermission(context)) return;
+
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+                &&
+                ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
 
         LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10000)  // 10 segundos
-                .setFastestInterval(5000);  // 5 segundos
+                .setInterval(10000)
+                .setFastestInterval(5000);
 
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-                callback, Looper.getMainLooper());
+        fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                callback,
+                Looper.getMainLooper()
+        );
     }
 
     public interface OnLocationResultListener {

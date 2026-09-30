@@ -47,6 +47,43 @@ public class TripsFragment extends Fragment {
             transaction.commit();
         });
 
+        // Al seleccionar un viaje, abrir la pantalla para agregar un destino
+        listViewTrips.setOnItemClickListener((parent, viewItem, position, id) -> {
+
+            Viaje viajeSeleccionado = viajesList.get(position);
+
+            if (viajeSeleccionado.getId() == null) {
+                Toast.makeText(
+                        getContext(),
+                        "No se pudo identificar el viaje",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            // Enviar el ID del viaje al fragmento de destinos
+            Bundle args = new Bundle();
+            args.putLong("viajeId", viajeSeleccionado.getId());
+
+            AddDestinationFragment destinationFragment =
+                    new AddDestinationFragment();
+
+            destinationFragment.setArguments(args);
+
+            FragmentTransaction transaction =
+                    requireActivity()
+                            .getSupportFragmentManager()
+                            .beginTransaction();
+
+            transaction.replace(
+                    R.id.fragmentContainer,
+                    destinationFragment
+            );
+
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+
         // Cargar viajes desde la API
         loadTripsFromApi();
 

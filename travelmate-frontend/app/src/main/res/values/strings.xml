@@ -3,6 +3,13 @@
     <string name="tvWelcome">¡Bienvenido a TravelMate! ✈️ </string>
     <string name="tvSubtitle">Tus próximos viajes y destinos organizados.</string>
     <string name="tvTitleNotes">Mi Wishlist de Viajes</string>
+    <string name="add_destination_title">Agregar destino</string>
+    <string name="destination_name">Nombre del destino</string>
+    <string name="visit_date">Fecha de visita (AAAA-MM-DD)</string>
+    <string name="latitude">Latitud</string>
+    <string name="longitude">Longitud</string>
+    <string name="get_location">Obtener ubicación</string>
+    <string name="save_destination">Guardar destino</string>
     <string-array name="expense_categories">
         <item>Seleccione una categoría...</item>
         <item>TRANSPORTE</item>
